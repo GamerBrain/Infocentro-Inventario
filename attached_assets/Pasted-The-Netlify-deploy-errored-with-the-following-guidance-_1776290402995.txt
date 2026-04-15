@@ -1,0 +1,137 @@
+The Netlify deploy errored, with the following guidance provided:
+
+- Relevant log lines:
+  - Build attempted with Vite: [line 65](#L65) and [line 67](#L67).
+  - Vite failed to load config: [line 68](#L68).
+  - Root error: "PORT environment variable is required but was not provided": [line 70](#L70).
+  - The build script failed as a result: [line 82](#L82).
+
+Diagnosis
+- Error type: missing required environment variable at config-load time.
+- Cause: vite.config.ts (or some file executed while loading Vite config) requires process.env.PORT and throws if it is not present. Because Netlify's build environment doesn't provide PORT by default, Vite fails to load the config and the build exits with status 1.
+
+Solution — pick one of these (recommended order)
+
+1) Provide PORT to Netlify's build environment (quickest)
+- In Netlify UI: Site → Site settings → Build & deploy → Environment → New variable
+  - Key: PORT
+  - Value: 5173 (or whatever value your config expects)
+- Or add to netlify.toml at repo root:
+```toml
+[build.environment]
+  PORT = "5173"
+```
+This ensures the variable is present when Vite loads its config during the build.
+
+2) Make vite.config.ts resilient (recommended long-term fix)
+- Update your Vite config to use a sensible default instead of throwing when PORT is missing. Example change in vite.config.ts:
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+
+const PORT = process.env.PORT ?? '5173'; // default value if not provided
+
+export default defineConfig({
+  server: {
+    port: Number(PORT),
+  },
+  // ...rest of config
+});
+```
+- If your current config explicitly throws when PORT is missing, remove that throw and use a default or optional behavior. This prevents build-time crashes when an environment variable isn't set.
+
+3) Pass PORT at build time (alternative)
+- Change your build command in netlify.toml or Site settings to prefix the env var:
+```toml
+[build]
+  command = "PORT=5173 pnpm --filter @workspace/infocentro-inventory... run build"
+```
+or set it inline in the build command field in Netlify UI. This is less maintainable than setting an environment variable or making config robust.
+
+Notes
+- Use method (1) for the fastest fix. Combine with (2) to make the project resilient across environments.
+- No package installation or rollup external settings are needed for this error.
+
+The relevant error logs are:
+
+Line 0: build-image version: ac6eb13fbf000e5c09ad677efd8b7c3c2d0142b6 (noble-new-builds)
+Line 1: buildbot version: 8867f4b2604d4cbf5c3a806b3254c82128b2ca70
+Line 2: Fetching cached dependencies
+Line 3: Failed to fetch cache, continuing with build
+Line 4: Fetching build zip file
+Line 5: Starting to prepare the repo for build
+Line 6: Custom publish path detected. Proceeding with the specified path: 'artifacts/infocentro-inventory/dist'
+Line 7: Custom build command detected. Proceeding with the specified command: 'pnpm --filter @workspace/infocentro-inventory... run buil
+Line 8: Installing dependencies
+Line 9: mise [36m~/.config/mise/config.toml[0m tools: [34mpython[0m@3.14.3
+Line 10: mise [36m~/.config/mise/config.toml[0m tools: [34mruby[0m@3.4.8
+Line 11: mise [36m~/.config/mise/config.toml[0m tools: [34mgo[0m@1.26.2
+Line 12: v22.22.2 is already installed.
+Line 13: Now using node v22.22.2 (npm v10.9.7)
+Line 29: + prettier 3.8.1
+Line 30: + typescript 5.9.3
+Line 31: . preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >
+Line 32: . preinstall: Done
+Line 33: Done in 4.7s using pnpm v10.30.3
+Line 34: npm packages installed using pnpm
+Line 35: Successfully installed dependencies
+Line 36: Detected 0 framework(s)
+Line 37: Starting build script
+Line 38: Section completed: initializing
+Line 39: Failed during stage 'building site': Build script returned non-zero exit code: 2
+Line 40: [96m[1m​[22m[39m
+Line 41: [96m[1mNetlify Build                                                 [22m[39m
+Line 42: [96m[1m────────────────────────────────────────────────────────────────[22m[39m
+Line 43: [36m[1m​[22m[39m
+Line 44: [36m[1m❯ Version[22m[39m
+Line 45:   @netlify/build 35.13.1
+Line 46: [36m[1m​[22m[39m
+Line 47: [36m[1m❯ Flags[22m[39m
+Line 48:   accountId: 699f8bb45673bf19ec826265
+Line 49:   baseRelDir: true
+Line 58: [36m[1m​[22m[39m
+Line 59: [36m[1m❯ Context[22m[39m
+Line 60:   production
+Line 61: [96m[1m​[22m[39m
+Line 62: [96m[1mbuild.command from netlify.toml                               [22m[39m
+Line 63: [96m[1m────────────────────────────────────────────────────────────────[22m[39m
+Line 64: ​
+Line 65: [36m$ pnpm --filter @workspace/infocentro-inventory... run build[39m
+Line 66: Scope: 2 of 9 workspace projects
+Line 67: [36martifacts/infocentro-inventory[39m [96mbuild[39m$ vite build --config vite.config.ts
+Line 68: [36martifacts/infocentro-inventory[39m [96mbuild[39m: [90m[31mfailed to load config from /opt/build/repo/artifacts/infocen
+Line 69: [36martifacts/infocentro-inventory[39m [96mbuild[39m: [90m[31merror during build:[39m
+Line 70: [36martifacts/infocentro-inventory[39m [96mbuild[39m: [90mError: PORT environment variable is required but was not provided
+Line 71: [36martifacts/infocentro-inventory[39m [96mbuild[39m: [90m    at file:///opt/build/repo/artifacts/infocentro-inventory/node
+Line 72: [36martifacts/infocentro-inventory[39m [96mbuild[39m: [90m    at ModuleJob.run (node:internal/modules/esm/module_job:343:25
+Line 73: [36martifacts/infocentro-inventory[39m [96mbuild[39m: [90m    at async onImport.tracePromise.__proto__ (node:internal/modul
+Line 74: [36martifacts/infocentro-inventory[39m [96mbuild[39m: [90m    at async loadConfigFromBundledFile (file:///opt/build/repo/no
+Line 75: [36martifacts/infocentro-inventory[39m [96mbuild[39m: [90m    at async bundleAndLoadConfigFile (file:///opt/build/repo/node
+Line 76: [36martifacts/infocentro-inventory[39m [96mbuild[39m: [90m    at async loadConfigFromFile (file:///opt/build/repo/node_modu
+Line 77: [36martifacts/infocentro-inventory[39m [96mbuild[39m: [90m    at async resolveConfig (file:///opt/build/repo/node_modules/.
+Line 78: [36martifacts/infocentro-inventory[39m [96mbuild[39m: [90m    at async createBuilder (file:///opt/build/repo/node_modules/.
+Line 79: [36martifacts/infocentro-inventory[39m [96mbuild[39m: [90m    at async CAC.<anonymous> (file:///opt/build/repo/node_modules
+Line 80: [36martifacts/infocentro-inventory[39m [96mbuild[39m: Failed
+Line 81: /opt/build/repo/artifacts/infocentro-inventory:
+Line 82: [41m[30m ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL [39m[49m [31m@workspace/infocentro-inventory@0.0.0 build: `vite build --config v
+Line 83: [31mExit status 1[39m
+Line 84: [91m[1m​[22m[39m
+Line 85: [91m[1m"build.command" failed                                        [22m[39m
+Line 86: [91m[1m────────────────────────────────────────────────────────────────[22m[39m
+Line 87: ​
+Line 88:   [31m[1mError message[22m[39m
+Line 89:   Command failed with exit code 1: pnpm --filter @workspace/infocentro-inventory... run build
+Line 90: ​
+Line 91:   [31m[1mError location[22m[39m
+Line 92:   In build.command from netlify.toml:
+Line 93:   pnpm --filter @workspace/infocentro-inventory... run build
+Line 94: ​
+Line 95:   [31m[1mResolved config[22m[39m
+Line 96:   build:
+Line 97:     command: pnpm --filter @workspace/infocentro-inventory... run build
+Line 98:     commandOrigin: config
+Line 99:     publish: /opt/build/repo/artifacts/infocentro-inventory/dist
+Line 100:     publishOrigin: config
+Line 101: Build failed due to a user error: Build script returned non-zero exit code: 2
+Line 102: Failing build: Failed to build site
+Line 103: Finished processing build request in 12.365s
