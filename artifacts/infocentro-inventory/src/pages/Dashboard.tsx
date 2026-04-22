@@ -168,7 +168,7 @@ export default function Dashboard() {
             </svg>
           </div>
           <div>
-            <h1>InfoInventario</h1>
+            <h1>Info-Inventario</h1>
             <p>Sistema de Control de Activos</p>
           </div>
         </div>

@@ -119,7 +119,7 @@ export default function AuthPage() {
               <circle cx="30" cy="14" r="3" fill="#4a90d9" />
             </svg>
           </div>
-          <h1 className="auth-brand">InfoInventario</h1>
+          <h1 className="auth-brand">Info-Inventario</h1>
           <p className="auth-subtitle">Sistema de Control de Activos — Infocentro</p>
         </div>
 
