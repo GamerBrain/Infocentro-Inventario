@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { InventoryItem, CATEGORIES, ITEM_TYPES, CONDITIONS } from "@/lib/types";
-import { censorProfanity } from "@/lib/profanityFilter";
+import { containsProfanity } from "@/lib/profanityFilter";
 import { useLocation } from "wouter";
 
 function generateSerial(): string {
@@ -85,6 +85,14 @@ export default function Dashboard() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+
+    if (containsProfanity(form.description)) {
+      showToast(
+        "La descripción contiene lenguaje inapropiado. Por favor, elimina las palabras ofensivas antes de continuar.",
+        "error"
+      );
+      return;
+    }
 
     if (editItem) {
       const updateData: Record<string, string> = {
@@ -413,10 +421,10 @@ export default function Dashboard() {
                 <textarea
                   placeholder="Detalles adicionales, accesorios incluidos, observaciones..."
                   value={form.description}
-                  onChange={e => setForm(f => ({ ...f, description: censorProfanity(e.target.value) }))}
+                  onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                   rows={3}
                 />
-                <span className="field-hint">Las palabras inapropiadas serán censuradas automáticamente.</span>
+                <span className="field-hint">No se permite el uso de lenguaje ofensivo.</span>
               </div>
 
               <div className="modal-actions">
