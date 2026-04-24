@@ -251,13 +251,13 @@ export default function Dashboard() {
                   <tbody>
                     {filtered.map(item => (
                       <tr key={item.id}>
-                        <td className="item-name">{item.name}</td>
-                        <td><span className="badge-category">{item.category}</span></td>
-                        <td>{item.item_type}</td>
-                        <td><code className="serial-code">{item.serial}</code></td>
-                        <td><span className={`badge-condition cond-${item.condition.replace(/ /g, "-").toLowerCase()}`}>{item.condition}</span></td>
-                        <td>{item.location ?? "—"}</td>
-                        <td className="actions-cell">
+                        <td className="item-name" data-label="Nombre">{item.name}</td>
+                        <td data-label="Categoría"><span className="badge-category">{item.category}</span></td>
+                        <td data-label="Tipo">{item.item_type}</td>
+                        <td data-label="Serial"><code className="serial-code">{item.serial}</code></td>
+                        <td data-label="Estado"><span className={`badge-condition cond-${item.condition.replace(/ /g, "-").toLowerCase()}`}>{item.condition}</span></td>
+                        <td data-label="Ubicación">{item.location ?? "—"}</td>
+                        <td className="actions-cell" data-label="Acciones">
                           <button className="btn-icon edit" onClick={() => openEdit(item)} title="Editar">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                           </button>

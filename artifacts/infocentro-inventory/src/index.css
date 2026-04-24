@@ -831,15 +831,160 @@ input, select, textarea, button { font-family: inherit; }
 .confirm-modal .modal-actions { justify-content: center; }
 
 /* ===========================
-   RESPONSIVE
+   RESPONSIVE — Tablet (≤ 1024px)
+   =========================== */
+@media (max-width: 1024px) {
+  .dashboard-main { padding: 1.25rem; }
+  .header-center h1 { font-size: 1rem; }
+  .header-center p { font-size: 0.68rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stat-card.highlight { grid-column: span 2; }
+}
+
+/* ===========================
+   RESPONSIVE — Mobile landscape (≤ 768px)
+   =========================== */
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 0 0.85rem;
+    height: auto;
+    min-height: 60px;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+  .header-center {
+    position: static;
+    transform: none;
+    order: 2;
+    flex: 1 1 100%;
+    justify-content: center;
+    margin-top: 0.25rem;
+  }
+  .header-center h1 { font-size: 1rem; }
+  .header-center p { font-size: 0.7rem; }
+  .header-logo svg { width: 30px; height: 30px; }
+  .signout-btn { padding: 0.45rem 0.7rem; font-size: 0.78rem; order: 1; }
+  .signout-btn span, .signout-btn { gap: 0.3rem; }
+  .header-user { order: 3; gap: 0.5rem; }
+  .user-avatar { width: 32px; height: 32px; font-size: 0.82rem; }
+  .user-name { font-size: 0.78rem; }
+  .user-role { font-size: 0.62rem; padding: 0.1rem 0.4rem; }
+
+  .dashboard-main { padding: 1rem; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .stat-card.highlight { grid-column: auto; }
+  .stat-number { font-size: 2.4rem; }
+
+  .toolbar { flex-direction: column; align-items: stretch; gap: 0.6rem; }
+  .toolbar-left { flex-direction: column; gap: 0.5rem; width: 100%; }
+  .search-input, .filter-select { max-width: 100%; width: 100%; min-width: 0; }
+  .btn-primary { width: 100%; justify-content: center; padding: 0.75rem 1rem; }
+}
+
+/* ===========================
+   RESPONSIVE — Mobile portrait (≤ 640px)
+   Tabla → tarjetas
    =========================== */
 @media (max-width: 640px) {
-  .dashboard-header { padding: 0 1rem; }
-  .dashboard-main { padding: 1rem; }
-  .toolbar { flex-direction: column; align-items: stretch; }
-  .toolbar-left { flex-direction: column; }
-  .search-input { max-width: 100%; }
-  .inventory-table { font-size: 0.82rem; }
-  .inventory-table thead th, .inventory-table td { padding: 0.65rem 0.6rem; }
+  .table-wrapper {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    overflow: visible;
+  }
+  .inventory-table { display: block; width: 100%; }
+  .inventory-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .inventory-table tbody { display: block; width: 100%; }
+  .inventory-table tbody tr {
+    display: block;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 0.85rem;
+    padding: 0.85rem 1rem;
+  }
+  .inventory-table tbody tr:hover { background: white; }
+  .inventory-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed var(--border);
+    text-align: right;
+    word-break: break-word;
+  }
+  .inventory-table td:last-child { border-bottom: none; }
+  .inventory-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: left;
+    flex-shrink: 0;
+  }
+  .inventory-table td.actions-cell {
+    justify-content: flex-end;
+    padding-top: 0.75rem;
+  }
+  .inventory-table td.actions-cell::before { display: none; }
+  .item-name { font-size: 1rem; }
+  .btn-icon { padding: 0.55rem; min-width: 40px; min-height: 40px; }
+
+  .dash-tab { flex: 1; text-align: center; padding: 0.55rem 0.5rem; font-size: 0.85rem; }
+  .dashboard-tabs { gap: 0.4rem; }
+
+  .modal-overlay { padding: 0.5rem; align-items: flex-end; }
+  .modal {
+    max-height: 95vh;
+    border-radius: var(--radius) var(--radius) 0 0;
+    animation: modalInMobile 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes modalInMobile {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .modal-header { padding: 1rem 1.15rem; }
+  .modal-header h2 { font-size: 1rem; }
+  .modal-form { padding: 1.15rem; gap: 0.85rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .modal-actions { flex-direction: column-reverse; gap: 0.5rem; }
+  .modal-actions button { width: 100%; padding: 0.85rem; }
+
+  .auth-card { padding: 1.5rem 1.25rem; border-radius: var(--radius); }
+  .auth-brand { font-size: 1.4rem; }
+  .auth-subtitle { font-size: 0.78rem; }
+  .input-wrapper input { font-size: 16px; }
+}
+
+/* ===========================
+   RESPONSIVE — Pequeño (≤ 380px)
+   =========================== */
+@media (max-width: 380px) {
+  .signout-btn { font-size: 0; padding: 0.5rem; }
+  .signout-btn svg { width: 18px; height: 18px; }
+  .user-info { display: none; }
+  .header-center h1 { font-size: 0.92rem; }
   .header-center p { display: none; }
+  .stat-number { font-size: 2rem; }
+  .table-count { font-size: 0.78rem; }
+}
+
+/* ===========================
+   Touch / accesibilidad
+   =========================== */
+@media (hover: none) and (pointer: coarse) {
+  button, .btn-icon, .dash-tab, .filter-select { min-height: 40px; }
+  input, select, textarea { font-size: 16px; }
 }
