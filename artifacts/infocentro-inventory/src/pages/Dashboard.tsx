@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { InventoryItem, CATEGORIES, ITEM_TYPES, CONDITIONS } from "@/lib/types";
+import { censorProfanity } from "@/lib/profanityFilter";
 import { useLocation } from "wouter";
 
 function generateSerial(): string {
@@ -412,9 +413,10 @@ export default function Dashboard() {
                 <textarea
                   placeholder="Detalles adicionales, accesorios incluidos, observaciones..."
                   value={form.description}
-                  onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                  onChange={e => setForm(f => ({ ...f, description: censorProfanity(e.target.value) }))}
                   rows={3}
                 />
+                <span className="field-hint">Las palabras inapropiadas serán censuradas automáticamente.</span>
               </div>
 
               <div className="modal-actions">
